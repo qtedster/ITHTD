@@ -1,0 +1,123 @@
+@page "/tickets/{Id:int}"
+@rendermode InteractiveServer
+@inject IDbContextFactory<HelpdeskContext> DbFactory
+@inject NavigationManager Nav
+
+<PageTitle>Ticket Detail</PageTitle>
+
+@if (errorMessage is not null)
+{
+    <p class="text-danger">@errorMessage</p>
+}
+else if (ticket is null)
+{
+    <p>Loading…</p>
+}
+else
+{
+    <p><strong>Requester:</strong> @ticket.RequesterName</p>
+    <p><strong>Created:</strong> @ticket.CreatedAt.ToShortDateString()</p>
+
+    <EditForm Model="ticket" OnValidSubmit="HandleSave">
+        <DataAnnotationsValidator />
+
+        <label>
+            Title:
+            <InputText @bind-Value="ticket.Title" />
+        </label>
+        <ValidationMessage For="@(() => ticket.Title)" />
+
+        <label>
+            Description:
+            <InputTextArea @bind-Value="ticket.Description" />
+        </label>
+        <ValidationMessage For="@(() => ticket.Description)" />
+
+        <label>
+            Status:
+            <InputSelect @bind-Value="ticket.Status">
+                @foreach (var status in Enum.GetValues<TicketStatus>())
+                {
+                    <option value="@status">@status</option>
+                }
+            </InputSelect>
+        </label>
+
+        <label>
+            Priority:
+            <InputSelect @bind-Value="ticket.Priority">
+                @foreach (var priority in Enum.GetValues<TicketPriority>())
+                {
+                    <option value="@priority">@priority</option>
+                }
+            </InputSelect>
+        </label>
+
+        <label>
+            Assigned Agent:
+            <InputSelect @bind-Value="ticket.AssignedAgentId">
+                <option value="">Unassigned</option>
+                @foreach (var agent in agents)
+                {
+                    <option value="@agent.Id">@agent.Name</option>
+                }
+            </InputSelect>
+        </label>
+
+        <button type="submit">Save</button>
+    </EditForm>
+
+    @if (saveMessage is not null)
+    {
+        <p>@saveMessage</p>
+    }
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Ticket? ticket;
+    private List<Agent> agents = new();
+    private string? errorMessage;
+    private string? saveMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await using var db = await DbFactory.CreateDbContextAsync();
+            ticket = await db.Tickets.Include(t => t.AssignedAgent)
+                .FirstOrDefaultAsync(t => t.Id == Id);
+
+            if (ticket is null)
+            {
+                errorMessage = $"Ticket {Id} was not found.";
+                return;
+            }
+
+            agents = await db.Agents.OrderBy(a => a.Name).ToListAsync();
+        }
+        catch (Exception)
+        {
+            errorMessage = "Could not load this ticket. Please try again.";
+        }
+    }
+
+    private async Task HandleSave()
+    {
+        if (ticket is null) return;
+
+        await using var db = await DbFactory.CreateDbContextAsync();
+        var tracked = await db.Tickets.FindAsync(ticket.Id);
+        if (tracked is null) return;
+
+        tracked.Title = ticket.Title;
+        tracked.Description = ticket.Description;
+        tracked.Status = ticket.Status;
+        tracked.Priority = ticket.Priority;
+        tracked.AssignedAgentId = ticket.AssignedAgentId;
+
+        await db.SaveChangesAsync();
+        saveMessage = "Saved.";
+    }
+}

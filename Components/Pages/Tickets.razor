@@ -1,0 +1,69 @@
+@page "/tickets"
+@rendermode InteractiveServer
+@inject IDbContextFactory<HelpdeskContext> DbFactory
+
+<PageTitle>Tickets</PageTitle>
+
+<h1>Tickets</h1>
+
+@if (errorMessage is not null)
+{
+    <p class="text-danger">@errorMessage</p>
+}
+else if (tickets is null)
+{
+    <p>Loading…</p>
+}
+else if (tickets.Count == 0)
+{
+    <p>No tickets yet.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Requester</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Assigned Agent</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in tickets)
+            {
+                <tr>
+                    <td>@ticket.Title</td>
+                    <td>@ticket.RequesterName</td>
+                    <td>@ticket.Status</td>
+                    <td>@ticket.Priority</td>
+                    <td>@(ticket.AssignedAgent?.Name ?? "Unassigned")</td>
+                    <td><a href="/tickets/@ticket.Id">View</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Ticket>? tickets;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await using var db = await DbFactory.CreateDbContextAsync();
+            tickets = await db.Tickets
+                .Include(t => t.AssignedAgent)
+                .OrderByDescending(t => t.CreatedAt)
+                .ToListAsync();
+        }
+        catch (Exception)
+        {
+            errorMessage = "Could not load tickets. Please try again.";
+        }
+    }
+}

@@ -1,0 +1,68 @@
+@page "/tickets/new"
+@rendermode InteractiveServer
+@inject IDbContextFactory<HelpdeskContext> DbFactory
+@inject NavigationManager Nav
+
+<PageTitle>New Ticket</PageTitle>
+
+<h1>New Ticket</h1>
+
+<EditForm Model="newTicket" OnValidSubmit="HandleCreate">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <label>
+        Title:
+        <InputText @bind-Value="newTicket.Title" />
+    </label>
+    <ValidationMessage For="@(() => newTicket.Title)" />
+
+    <label>
+        Description:
+        <InputTextArea @bind-Value="newTicket.Description" />
+    </label>
+    <ValidationMessage For="@(() => newTicket.Description)" />
+
+    <label>
+        Requester Name:
+        <InputText @bind-Value="newTicket.RequesterName" />
+    </label>
+    <ValidationMessage For="@(() => newTicket.RequesterName)" />
+
+    <label>
+        Priority:
+        <InputSelect @bind-Value="newTicket.Priority">
+            @foreach (var priority in Enum.GetValues<TicketPriority>())
+            {
+                <option value="@priority">@priority</option>
+            }
+        </InputSelect>
+    </label>
+
+    <button type="submit">Submit Ticket</button>
+</EditForm>
+
+@if (errorMessage is not null)
+{
+    <p class="text-danger">@errorMessage</p>
+}
+
+@code {
+    private Ticket newTicket = new();
+    private string? errorMessage;
+
+    private async Task HandleCreate()
+    {
+        try
+        {
+            await using var db = await DbFactory.CreateDbContextAsync();
+            db.Tickets.Add(newTicket);
+            await db.SaveChangesAsync();
+            Nav.NavigateTo($"/tickets/{newTicket.Id}");
+        }
+        catch (Exception)
+        {
+            errorMessage = "Could not create the ticket. Please try again.";
+        }
+    }
+}
