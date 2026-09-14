@@ -1,0 +1,52 @@
+@page "/agents"
+@rendermode InteractiveServer
+@inject IDbContextFactory<HelpdeskContext> DbFactory
+
+<PageTitle>Agents</PageTitle>
+
+<h1>Agents</h1>
+
+@if (agents is null)
+{
+    <p>Loading…</p>
+}
+else
+{
+    <ul>
+        @foreach (var agent in agents)
+        {
+            <li>@agent.Name</li>
+        }
+    </ul>
+}
+
+<EditForm Model="newAgent" OnValidSubmit="HandleAdd">
+    <DataAnnotationsValidator />
+    <label>
+        New agent name:
+        <InputText @bind-Value="newAgent.Name" />
+    </label>
+    <button type="submit">Add Agent</button>
+</EditForm>
+
+@code {
+    private List<Agent>? agents;
+    private Agent newAgent = new();
+
+    protected override async Task OnInitializedAsync() => await LoadAgents();
+
+    private async Task LoadAgents()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        agents = await db.Agents.OrderBy(a => a.Name).ToListAsync();
+    }
+
+    private async Task HandleAdd()
+    {
+        await using var db = await DbFactory.CreateDbContextAsync();
+        db.Agents.Add(newAgent);
+        await db.SaveChangesAsync();
+        newAgent = new();
+        await LoadAgents();
+    }
+}

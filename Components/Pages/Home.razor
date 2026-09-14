@@ -1,7 +1,51 @@
 ﻿@page "/"
+@rendermode InteractiveServer
+@inject IDbContextFactory<HelpdeskContext> DbFactory
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>ITHTD — IT Helpdesk Ticketing Dashboard</h1>
 
-Welcome to your new app.
+@if (errorMessage is not null)
+{
+    <p class="text-danger">@errorMessage</p>
+}
+else if (summary is null)
+{
+    <p>Loading…</p>
+}
+else
+{
+    <ul>
+        <li>Open: @summary.Open</li>
+        <li>In Progress: @summary.InProgress</li>
+        <li>Resolved: @summary.Resolved</li>
+        <li>Closed: @summary.Closed</li>
+    </ul>
+    <p><a href="/tickets">View all tickets</a></p>
+}
+
+@code {
+    private record StatusSummary(int Open, int InProgress, int Resolved, int Closed);
+    private StatusSummary? summary;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            await using var db = await DbFactory.CreateDbContextAsync();
+            var all = await db.Tickets.ToListAsync();
+            summary = new StatusSummary(
+                all.Count(t => t.Status == TicketStatus.Open),
+                all.Count(t => t.Status == TicketStatus.InProgress),
+                all.Count(t => t.Status == TicketStatus.Resolved),
+                all.Count(t => t.Status == TicketStatus.Closed)
+            );
+        }
+        catch (Exception)
+        {
+            errorMessage = "Could not load dashboard summary.";
+        }
+    }
+}
