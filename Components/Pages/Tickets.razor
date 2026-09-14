@@ -66,6 +66,7 @@ else
         {
             await using var db = await DbFactory.CreateDbContextAsync();
             tickets = await db.Tickets
+                .AsNoTracking()
                 .Include(t => t.AssignedAgent)
                 .OrderByDescending(t => t.CreatedAt)
                 .ToListAsync();
