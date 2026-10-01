@@ -18,6 +18,22 @@
     font-family: 'IBM Plex Mono', monospace;
 }
 
+.stat-number.status-open {
+    color: var(--status-open);
+}
+
+.stat-number.status-inprogress {
+    color: var(--status-progress);
+}
+
+.stat-number.status-resolved {
+    color: var(--status-resolved);
+}
+
+.stat-number.status-closed {
+    color: var(--status-closed);
+}
+
 .stat-label {
     font-size: 0.85rem;
     color: var(--ink-soft);
