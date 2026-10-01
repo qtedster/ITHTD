@@ -34,10 +34,10 @@ else
         <tbody>
             @foreach (var ticket in tickets)
             {
-                <tr>
+                                <tr class="@StatusClass(ticket.Status).Replace("status-", "row-")" style="border-left-width: 3px; border-left-style: solid;">
                     <td>@ticket.Title</td>
                     <td>@ticket.RequesterName</td>
-                    <td>@ticket.Status</td>
+                    <td><span class="status-badge @StatusClass(ticket.Status)">@ticket.Status</span></td>
                     <td>@ticket.Priority</td>
                     <td>@(ticket.AssignedAgent?.Name ?? "Unassigned")</td>
                     <td><a href="/tickets/@ticket.Id">View</a></td>
@@ -77,4 +77,12 @@ else
             errorMessage = "Could not load tickets. Please try again.";
         }
     }
+    private string StatusClass(TicketStatus status) => status switch
+    {
+        TicketStatus.Open => "status-open",
+        TicketStatus.InProgress => "status-inprogress",
+        TicketStatus.Resolved => "status-resolved",
+        TicketStatus.Closed => "status-closed",
+        _ => ""
+    };
 }

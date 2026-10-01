@@ -16,12 +16,24 @@ else if (summary is null)
 }
 else
 {
-    <ul>
-        <li>Open: @summary.Open</li>
-        <li>In Progress: @summary.InProgress</li>
-        <li>Resolved: @summary.Resolved</li>
-        <li>Closed: @summary.Closed</li>
-    </ul>
+    <div class="stat-row">
+        <div class="stat">
+            <span class="stat-number status-open">@summary.Open</span>
+            <span class="stat-label">Open</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number status-inprogress">@summary.InProgress</span>
+            <span class="stat-label">In Progress</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number status-resolved">@summary.Resolved</span>
+            <span class="stat-label">Resolved</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number status-closed">@summary.Closed</span>
+            <span class="stat-label">Closed</span>
+        </div>
+    </div>
     <p><a href="/tickets">View all tickets</a></p>
 }
 
