@@ -29,6 +29,7 @@ else
         <InputText class="form-control" @bind-Value="newAgent.Name" placeholder="New agent name" />
         <button type="submit" class="btn btn-primary">Add Agent</button>
     </div>
+    <ValidationMessage For="@(() => newAgent.Name)" />
 </EditForm>
 
 @code {
