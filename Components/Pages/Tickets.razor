@@ -35,8 +35,7 @@ else
             @foreach (var ticket in tickets)
             {
                                 <tr class="@StatusClass(ticket.Status).Replace("status-", "row-")" style="border-left-width: 3px; border-left-style: solid;">
-                    <td>@ticket.Title</td>
-                    <td>@ticket.RequesterName</td>
+                    <td><a href="/tickets/@ticket.Id">@ticket.Title</a></td>                    <td>@ticket.RequesterName</td>
                     <td><span class="status-badge @StatusClass(ticket.Status)">@ticket.Status</span></td>
                     <td>@ticket.Priority</td>
                     <td>@(ticket.AssignedAgent?.Name ?? "Unassigned")</td>

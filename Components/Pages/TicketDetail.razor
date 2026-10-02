@@ -15,64 +15,63 @@ else if (ticket is null)
 }
 else
 {
-    <p><strong>Requester:</strong> @ticket.RequesterName</p>
-    <p><strong>Created:</strong> @ticket.CreatedAt.ToShortDateString()</p>
+    <p class="back-link"><a href="/tickets">&larr; Back to list</a></p>
 
     <EditForm Model="ticket" OnValidSubmit="HandleSave">
         <DataAnnotationsValidator />
 
-        <label>
-            Title:
-            <InputText @bind-Value="ticket.Title" />
-        </label>
-        <ValidationMessage For="@(() => ticket.Title)" />
+        <div class="detail-layout">
+            <div class="detail-main">
+                <InputText class="title-input" @bind-Value="ticket.Title" />
+                <ValidationMessage For="@(() => ticket.Title)" />
 
-        <label>
-            Description:
-            <InputTextArea @bind-Value="ticket.Description" />
-        </label>
-        <ValidationMessage For="@(() => ticket.Description)" />
+                <p class="byline">@ticket.RequesterName &middot; @ticket.CreatedAt.ToShortDateString()</p>
 
-        <label>
-            Status:
-            <InputSelect @bind-Value="ticket.Status">
-                @foreach (var status in Enum.GetValues<TicketStatus>())
+                <InputTextArea class="description-input" @bind-Value="ticket.Description" />
+                <ValidationMessage For="@(() => ticket.Description)" />
+            </div>
+
+            <div class="detail-panel">
+                <div class="panel-field">
+                    <label>Status</label>
+                    <InputSelect @bind-Value="ticket.Status">
+                        @foreach (var status in Enum.GetValues<TicketStatus>())
+                        {
+                            <option value="@status">@status</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="panel-field">
+                    <label>Priority</label>
+                    <InputSelect @bind-Value="ticket.Priority">
+                        @foreach (var priority in Enum.GetValues<TicketPriority>())
+                        {
+                            <option value="@priority">@priority</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="panel-field">
+                    <label>Agent</label>
+                    <InputSelect @bind-Value="ticket.AssignedAgentId">
+                        <option value="">Unassigned</option>
+                        @foreach (var agent in agents)
+                        {
+                            <option value="@agent.Id">@agent.Name</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <button type="submit" class="btn btn-primary save-btn">Save</button>
+
+                @if (saveMessage is not null)
                 {
-                    <option value="@status">@status</option>
+                    <p class="save-message">@saveMessage</p>
                 }
-            </InputSelect>
-        </label>
-
-        <label>
-            Priority:
-            <InputSelect @bind-Value="ticket.Priority">
-                @foreach (var priority in Enum.GetValues<TicketPriority>())
-                {
-                    <option value="@priority">@priority</option>
-                }
-            </InputSelect>
-        </label>
-
-        <label>
-            Assigned Agent:
-            <InputSelect @bind-Value="ticket.AssignedAgentId">
-                <option value="">Unassigned</option>
-                @foreach (var agent in agents)
-                {
-                    <option value="@agent.Id">@agent.Name</option>
-                }
-            </InputSelect>
-        </label>
-
-        <button type="submit">Save</button>
+            </div>
+        </div>
     </EditForm>
-
-    @if (saveMessage is not null)
-    {
-        <p>@saveMessage</p>
-    }
-
-    <p><a href="/tickets">← Back to list</a></p>
 }
 
 @code {

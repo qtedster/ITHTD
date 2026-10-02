@@ -1,0 +1,93 @@
+.back-link {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    margin-bottom: 0.5rem;
+}
+
+.detail-layout {
+    display: flex;
+    gap: 1.75rem;
+}
+
+.detail-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.title-input {
+    width: 100%;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--ink);
+    border: none;
+    background: transparent;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+}
+
+.title-input:focus {
+    outline: none;
+    border-bottom: 1px solid var(--accent);
+}
+
+.byline {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    margin: 6px 0 16px;
+}
+
+.description-input {
+    width: 100%;
+    min-height: 120px;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    resize: vertical;
+}
+
+.detail-panel {
+    width: 200px;
+    flex-shrink: 0;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px;
+    height: fit-content;
+}
+
+.panel-field {
+    margin-bottom: 12px;
+}
+
+.panel-field label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+    margin-bottom: 4px;
+}
+
+.panel-field select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px 8px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    color: var(--ink);
+}
+
+.save-btn {
+    width: 100%;
+    margin-top: 2px;
+}
+
+.save-message {
+    font-size: 0.8rem;
+    color: var(--status-resolved);
+    margin-top: 8px;
+    margin-bottom: 0;
+}
