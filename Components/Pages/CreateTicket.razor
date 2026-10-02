@@ -11,35 +11,37 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <label>
-        Title:
-        <InputText @bind-Value="newTicket.Title" />
-    </label>
-    <ValidationMessage For="@(() => newTicket.Title)" />
+    <div class="ticket-form">
+        <div class="field-group">
+            <label>Title</label>
+            <InputText class="form-control" @bind-Value="newTicket.Title" placeholder="Short summary of the issue" />
+            <ValidationMessage For="@(() => newTicket.Title)" />
+        </div>
 
-    <label>
-        Description:
-        <InputTextArea @bind-Value="newTicket.Description" />
-    </label>
-    <ValidationMessage For="@(() => newTicket.Description)" />
+        <div class="field-group">
+            <label>Description</label>
+            <InputTextArea class="form-control" @bind-Value="newTicket.Description" placeholder="What's happening, and since when" />
+            <ValidationMessage For="@(() => newTicket.Description)" />
+        </div>
 
-    <label>
-        Requester Name:
-        <InputText @bind-Value="newTicket.RequesterName" />
-    </label>
-    <ValidationMessage For="@(() => newTicket.RequesterName)" />
+        <div class="field-group">
+            <label>Requester name</label>
+            <InputText class="form-control" @bind-Value="newTicket.RequesterName" placeholder="Full name" />
+            <ValidationMessage For="@(() => newTicket.RequesterName)" />
+        </div>
 
-    <label>
-        Priority:
-        <InputSelect @bind-Value="newTicket.Priority">
-            @foreach (var priority in Enum.GetValues<TicketPriority>())
-            {
-                <option value="@priority">@priority</option>
-            }
-        </InputSelect>
-    </label>
+        <div class="field-group">
+            <label>Priority</label>
+            <InputSelect class="form-control" @bind-Value="newTicket.Priority">
+                @foreach (var priority in Enum.GetValues<TicketPriority>())
+                {
+                    <option value="@priority">@priority</option>
+                }
+            </InputSelect>
+        </div>
 
-    <button type="submit">Submit Ticket</button>
+        <button type="submit" class="btn btn-primary">Submit Ticket</button>
+    </div>
 </EditForm>
 
 @if (errorMessage is not null)

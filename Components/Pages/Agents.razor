@@ -12,21 +12,23 @@
 }
 else
 {
-    <ul>
+    <div class="agent-list">
         @foreach (var agent in agents)
         {
-            <li>@agent.Name</li>
+            <div class="agent-row">
+                <span class="avatar-circle">@Initials(agent.Name)</span>
+                @agent.Name
+            </div>
         }
-    </ul>
+    </div>
 }
 
 <EditForm Model="newAgent" OnValidSubmit="HandleAdd">
     <DataAnnotationsValidator />
-    <label>
-        New agent name:
-        <InputText @bind-Value="newAgent.Name" />
-    </label>
-    <button type="submit">Add Agent</button>
+    <div class="add-agent-bar">
+        <InputText class="form-control" @bind-Value="newAgent.Name" placeholder="New agent name" />
+        <button type="submit" class="btn btn-primary">Add Agent</button>
+    </div>
 </EditForm>
 
 @code {
@@ -48,5 +50,13 @@ else
         await db.SaveChangesAsync();
         newAgent = new();
         await LoadAgents();
+    }
+
+    private string Initials(string name)
+    {
+        var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 0) return "?";
+        if (parts.Length == 1) return parts[0][..Math.Min(2, parts[0].Length)].ToUpper();
+        return $"{parts[0][0]}{parts[^1][0]}".ToUpper();
     }
 }
